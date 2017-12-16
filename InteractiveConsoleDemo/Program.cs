@@ -9,16 +9,17 @@ namespace InteractiveConsoleDemo
         static void Main(string[] args)
         {
             var heroes = new List<string> {"Iron Man", "Thor", "The Hulk"};
-
-            Console.WriteLine("Who is the coolest?");
+            const string question = "Who is the coolest?";
 
             ConsoleKeyInfo mainLoopKeyInfo;
 
             do
             {
-                (var selectedIndex, var keyInfo) = AskUserToSelectItem(heroes);
+                (var selectedIndex, var keyInfo) = AskUserToSelectItem(heroes, question);
 
                 Console.Clear();
+
+                Console.WriteLine(question);
 
                 if (keyInfo.Key == ConsoleKey.Enter)
                 {
@@ -35,7 +36,7 @@ namespace InteractiveConsoleDemo
             } while (mainLoopKeyInfo.Key != ConsoleKey.Escape);
         }
 
-        private static (int selectedIndex, ConsoleKeyInfo keyInfo) AskUserToSelectItem(IReadOnlyCollection<string> items)
+        private static (int selectedIndex, ConsoleKeyInfo keyInfo) AskUserToSelectItem(IReadOnlyCollection<string> items, string question)
         {
             var selectedIndex = 0;
 
@@ -46,6 +47,8 @@ namespace InteractiveConsoleDemo
             do
             {
                 Console.Clear();
+
+                Console.WriteLine(question);
 
                 for (var i = 0; i < items.Count; i++)
                 {
