@@ -6,61 +6,83 @@ namespace InteractiveConsoleDemo
 {
     class Program
     {
-        private static int _selectedHero;
-
         static void Main(string[] args)
         {
-            _selectedHero = 1;
-
             var heroes = new List<string> {"Iron Man", "Thor", "The Hulk"};
 
             Console.WriteLine("Who is the coolest?");
 
-            ConsoleKeyInfo key;
+            ConsoleKeyInfo mainLoopKeyInfo;
+
+            do
+            {
+                (var selectedIndex, var keyInfo) = AskUserToSelectItem(heroes);
+
+                Console.Clear();
+
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"{heroes.ElementAt(selectedIndex)} is the coolest!");
+                    Console.ResetColor();
+
+                    Console.WriteLine("Press a key to run again or Escape to exit");
+                }
+
+                mainLoopKeyInfo = Console.ReadKey();
+
+            } while (mainLoopKeyInfo.Key != ConsoleKey.Escape);
+        }
+
+        private static (int selectedIndex, ConsoleKeyInfo keyInfo) AskUserToSelectItem(IReadOnlyCollection<string> items)
+        {
+            var selectedIndex = 0;
+
+            Console.CursorVisible = false;
+
+            ConsoleKeyInfo keyInfo;
 
             do
             {
                 Console.Clear();
-                Console.CursorVisible = false;
 
-                for (var i = 0; i < heroes.Count; i++)
+                for (var i = 0; i < items.Count; i++)
                 {
-                    if (_selectedHero - 1 == i)
+                    if (selectedIndex == i)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"{i + 1}. {heroes.ElementAt(i)}");
+                        Console.WriteLine($"{i + 1}. {items.ElementAt(i)}");
                         Console.ResetColor();
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine($"{i + 1}. {heroes.ElementAt(i)}");
+                        Console.WriteLine($"{i + 1}. {items.ElementAt(i)}");
                         Console.ResetColor();
                     }
                 }
 
-                key = Console.ReadKey();
+                keyInfo = Console.ReadKey();
 
-                if (key.Key == ConsoleKey.DownArrow)
+                if (keyInfo.Key == ConsoleKey.DownArrow)
                 {
-                    if (_selectedHero + 1 <= heroes.Count)
+                    if (selectedIndex + 1 < items.Count)
                     {
-                        _selectedHero++;
+                        selectedIndex++;
                     }
                 }
 
-                if (key.Key == ConsoleKey.UpArrow)
+                if (keyInfo.Key == ConsoleKey.UpArrow)
                 {
-                    if (_selectedHero - 1 >= 1)
+                    if (selectedIndex - 1 >= 0)
                     {
-                        _selectedHero--;
+                        selectedIndex--;
                     }
                 }
-            } while (key.Key != ConsoleKey.Escape);
+            } while (keyInfo.Key != ConsoleKey.Escape && keyInfo.Key != ConsoleKey.Enter);
 
-            
-
-            Console.ReadLine();
+            return (selectedIndex, keyInfo);
         }
     }
 }
